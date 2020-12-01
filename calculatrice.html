@@ -1,1 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>◊ Calculatrice ◊</title>
+        <style>
+            div{display: block; margin: 0% 45%;}
+            table,td,tr{border: 1px solid;}
+            button{width: 100%;}
+            #text{display: block; margin-top: 20%; text-align: center;}
+        </style>
+        <script> 
+              
+            function btn_color1(x)                            // Fonction pour changer la couleur du bouton
+            {
+                x.style.background = "#00d4db";
+            }
+             
+            function btn_color(x)                             // Fonction pour réinitialiser la couleur du bouton
+            {
+                x.style.background = "#EFEFEF";
+            }
 
+            function back_color(x)                            // Fonction pour changer la couleur du fond d'entrée
+            {
+                x.style.background = "#8bbdff";
+            }
+
+            function intro()                                  // Fonction pour afficher un pop-up de bienvenue
+            {
+                alert("Bienvenue sur cette page");
+            }
+        
+            function calcul()                                 // Fonction pour calculer la valeur des entrées
+            { 
+                let a = document.getElementById("input").value;
+                let b = eval(a);
+                document.getElementById("input").value = b;
+            }
+        
+            function print(val)                               // Fonction pour afficher les valeurs
+            { 
+                document.getElementById("input").value+=val;
+            }
+        
+            function erase()                                  // Fonction pour effacer l'entrée
+            { 
+                document.getElementById("input").value = "";
+            }
+        
+            function key_event(key)
+            {
+                var str = text.innerHTML;
+                str += key.key;
+                if (str == "[object HTMLParagraphElement]Enter"){
+                    calcul()
+                }else if (str == "[object HTMLParagraphElement] "){
+                    erase()
+                };
+            }
+
+        </script>
+    </head>
+    <body onload="intro()">         <!-- Affichage du pop-up -->
+        <p id="text">Appuyez sur la touche "Espace" dans le cadre (input) pour effacer les entrées.</br>
+                        Appuyez sur la touche "Entrer" dans le cadre (input) pour effectuer le calcul.</p>
+        <div>
+            <table>                                                           <!-- Interface de la calculatrice -->
+                <tr>
+                    <td colspan="3"><input id="input" onfocus="back_color(this)" onkeydown="key_event(event)"/></td> 
+                    <td><button onclick="erase()" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">C</button></td>         <!-- Bouton pour effacer l'entrée -->
+                </tr>
+                <tr>
+                    <td><button onclick="print('1')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">1</button></td>
+                    <td><button onclick="print('2')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">2</button></td>
+                    <td><button onclick="print('3')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">3</button></td>
+                    <td><button onclick="print('+')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">+</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="print('4')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">4</button></td>
+                    <td><button onclick="print('5')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">5</button></td>
+                    <td><button onclick="print('6')"onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">6</button></td>
+                    <td><button onclick="print('-')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">-</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="print('7')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">7</button></td>
+                    <td><button onclick="print('8')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">8</button></td>
+                    <td><button onclick="print('9')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">9</button></td>
+                    <td><button onclick="print('*')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">*</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="print('.')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">.</button></td>
+                    <td><button onclick="print('0')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">0</button></td>
+                    <td><button onclick="calcul()" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">=</button></td>        <!-- Bouton pour effectuer le calcul -->
+                    <td><button onclick="print('/')" onmouseenter = "btn_color1(this)"
+                        onmouseleave = "btn_color(this)">/</button></td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
