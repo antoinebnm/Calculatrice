@@ -4,10 +4,11 @@
         <meta charset="utf-8"/>
         <title>◊ Calculatrice ◊</title>
         <style>
-            div{display: block; margin: 0% 45%;}
-            table,td,tr{border: 1px solid;}
-            button{width: 100%;}
-            #text{display: block; margin-top: 20%; text-align: center;}
+            div {display: block; margin: 0% 45%;}
+            table,td,tr {border: 1px solid;}
+            button {width: 100%;}
+            #text {display: block; margin-top: 20%; text-align: center;}
+            #var {visibility: hidden;}
         </style>
         <script> 
               
@@ -50,13 +51,25 @@
         
             function key_event(key)
             {
-                document.getElementById("text").textContent = text
-                var str = text.innerHTML; 
+                document.getElementById("var").textContent = text;
+                let str = text; 
                 str += key.key;
                 if (str == "[object HTMLParagraphElement]Enter"){
                     calcul()
                 }else if (str == "[object HTMLParagraphElement] "){
                     erase()
+                };
+            }
+
+            function key_alert(key)
+            {
+                document.getElementById("var").textContent = text;
+                let str = text; 
+                str += key.key;
+                if (str == "[object HTMLParagraphElement]Enter"){
+                    alert("Vous avez appuyé sur la touche 'Entrée', cela a effectué le calcul.")
+                }else if (str == "[object HTMLParagraphElement] "){
+                    alert("Vous avez appuyé sur la touche 'Espace', cela a effacé les entrées.")
                 };
             }
 
@@ -68,7 +81,7 @@
         <div>
             <table>                                                           <!-- Interface de la calculatrice -->
                 <tr>
-                    <td colspan="3"><input id="input" onfocus="back_color(this)" onkeydown="key_event(event)"/></td> 
+                    <td colspan="3"><input id="input" onfocus="back_color(this)" onkeydown="key_event(event)" onkeyup="key_alert(event)"/></td> 
                     <td><button onclick="erase()" onmouseenter = "btn_color1(this)"
                         onmouseleave = "btn_color(this)">C</button></td>         <!-- Bouton pour effacer l'entrée -->
                 </tr>
@@ -113,6 +126,7 @@
                         onmouseleave = "btn_color(this)">/</button></td>
                 </tr>
             </table>
+        <p id="var"></p>
         </div>
     </body>
 </html>
