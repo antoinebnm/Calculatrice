@@ -50,7 +50,8 @@
         
             function key_event(key)
             {
-                let str += key.key;
+                var str = text.innerHTML; 
+                str += key.key;
                 if (str == "[object HTMLParagraphElement]Enter"){
                     calcul()
                 }else if (str == "[object HTMLParagraphElement] "){
