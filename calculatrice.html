@@ -50,6 +50,7 @@
         
             function key_event(key)
             {
+                document.getElementById("text").textContent = text
                 var str = text.innerHTML; 
                 str += key.key;
                 if (str == "[object HTMLParagraphElement]Enter"){
