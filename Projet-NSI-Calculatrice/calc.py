@@ -73,6 +73,7 @@ def button_pressed(button):
     return
 
 
+
 # Touches Clavier d'ordi : __main__
 
 def key_pressed(key):
@@ -82,13 +83,41 @@ def key_pressed(key):
         if str(selector) == str(key.char):
             key_type = "number"
             number(key.char)
-    if str(key.char) == "c" or "C":
+    # Test : touche .
+    if key.char == "." or key.char == ",":
+        key_type = "point"
+        add_point()
+    # Test : touche +, -, x, ÷
+    elif key.char == "+" or key.char == "-" or key.char == "x" or key.char == "*" or key.char == "/" or key.char == "÷":
+        key_type = "basic-operation"
+        operation(key.char)
+    # Test : touche =
+    elif key.char == "=":
+        key_type = "calculate"
+        operation(key.char)
+    # Test : touche √
+    elif key.char == "F2":
+        key_type = "square root"
+        rc()
+    # Test : touche x²
+    elif key.char == "²" or key.char == "^":
+        key_type = "square"
+        car()
+    # Test : touche %
+    elif key.char == "%":
+        key_type = "percent"
+        percentage()
+    # Test : touche C
+    elif key.char == "C" or key.char == "c":
         key_type = "clear-all"
         clear()
+    # Test : touche CE
+    elif key.char == "<Alt-C>":
+        key_type = "delete"
+        delete()
     # Fin de la fonction
     if debug=="True":print("Type of the key pressed : {}".format(key_type))
     return
-
 
 ##########################################################
 #                                                        #
