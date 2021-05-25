@@ -7,6 +7,9 @@ from math import *
 
 # Initialisation des variables
 numbers = list(range(10))
+mode = ""
+nbrx = ["", "", "", ""]
+i = 0
 debug = str(input("Debug mode (True or False) : "))
 
 
@@ -15,6 +18,17 @@ debug = str(input("Debug mode (True or False) : "))
 #                 Fonctions Principales                  #
 #                                                        #
 ##########################################################
+
+# Affichage
+
+def display(mode, num="", ope=""):
+    print(mode)
+    if mode == "get":
+        nbrx[3] = result.get()
+    elif mode == "set":
+        sign.set(str(ope))
+        result.set(str(num))
+    return nbrx[3]
 
 # Menu
 
@@ -73,7 +87,6 @@ def button_pressed(button):
     return
 
 
-
 # Touches Clavier d'ordi : __main__
 
 def key_pressed(key):
@@ -83,41 +96,16 @@ def key_pressed(key):
         if str(selector) == str(key.char):
             key_type = "number"
             number(key.char)
-    # Test : touche .
-    if key.char == "." or key.char == ",":
-        key_type = "point"
-        add_point()
-    # Test : touche +, -, x, ÷
-    elif key.char == "+" or key.char == "-" or key.char == "x" or key.char == "*" or key.char == "/" or key.char == "÷":
-        key_type = "basic-operation"
-        operation(key.char)
-    # Test : touche =
-    elif key.char == "=":
-        key_type = "calculate"
-        operation(key.char)
-    # Test : touche √
-    elif key.char == "F2":
-        key_type = "square root"
-        rc()
-    # Test : touche x²
-    elif key.char == "²" or key.char == "^":
-        key_type = "square"
-        car()
-    # Test : touche %
-    elif key.char == "%":
-        key_type = "percent"
-        percentage()
-    # Test : touche C
-    elif key.char == "C" or key.char == "c":
+    if str(key.char) == "c" or str(key.char) == "C":
         key_type = "clear-all"
         clear()
-    # Test : touche CE
-    elif key.char == "<Alt-C>":
-        key_type = "delete"
-        delete()
+    elif str(key.char) == "@":
+        key_type = "dev key"
+        print(display("get"))
     # Fin de la fonction
     if debug=="True":print("Type of the key pressed : {}".format(key_type))
     return
+
 
 ##########################################################
 #                                                        #
@@ -128,7 +116,7 @@ def key_pressed(key):
 # number : incrémentation de nombres sur l'écran
 def number(button):
     char_limit = 8
-    input_string = result.get()
+    input_string = display("get")
     input_list = list(input_string)
     # point detection
     for selector in input_list:
@@ -136,13 +124,13 @@ def number(button):
             if debug=="True":print("Point detected : chara limit = 9")
             char_limit = 9
     if input_string == "0":
-        result.set(button)
+        display("set", button)
     elif int(len(input_list))>=int(char_limit):
         if debug=="True":print("Limite de charactère atteinte")
         pass
     else:
-        result.set(str(input_string) + str(button))
-    input_string = result.get()
+        display("set", str(input_string) + str(button))
+    input_string = display("get")
     input_list = list(input_string)
     if debug=="True":print("input_string="+str(input_string),"\n","input_list="+str(input_list),"\n","len(input_list)="+str(len(input_list)))
     return
@@ -150,7 +138,7 @@ def number(button):
 # addpoint : ajout d'un point après le dernier chiffre
 def add_point():
     point_placed = False
-    input_string = result.get()
+    input_string = display("get")
     input_list = list(input_string)
     # point detection
     for selector in input_list:
@@ -158,79 +146,77 @@ def add_point():
             if debug=="True":print("Erreur : un point est déjà placé")
             point_placed = True
     if point_placed != True:
-        result.set(str(input_string) + ".")
+        display("set", str(input_string) + ".")
     return
 
 # operation : tri des opérations
 def operation(button):
-    nbr1 = result.get()
+    nbrx[1] = display("get")
     if button == "=":
-        ope = signe.get()
+        ope = sign.get()
         print(ope)
-        calculate(nbr1, ope)
+        calculate(nbrx[1], ope)
+        return
     if button == "+":
         ope = "+"
     elif button == "-":
         ope = "-"
-    elif button == "x":
+    elif button == "x" or button == "*":
         ope = "*"
-    elif button == "÷":
+    elif button == "÷" or button == "/":
         ope = "/"
-    result.set("0")
-    signe.set(ope)
+    display("set", "0", ope)
     return
 
 # calculate : calculer
-def calculate(nbr1, ope):
-    nbr2 = result.get()
+def calculate(nbr, ope):
+    nbrx[2] = display("get")
     if ope != "":
-        resultat = eval(str(nbr1) + str(ope) + str(nbr2))
+        resultat = eval(str(nbr) + str(nbrx[0]) + str(nbrx[2]))
     else:
-        resultat = nbr2
-        #error_msg = "Nombre ou signe opératoire manquant."
+        resultat = nbrx[2]
+        #error_msg = "Nombre ou sign opératoire manquant."
         #error(error_msg)
     ope = ""
-    result.set(resultat)
-    signe.set(ope)
+    display("set", resultat, ope)
     return
 
 # clear : effacer l'écran
 def clear():
     ope = ""
-    signe.set(ope)
-    result.set("0")
+    display("set", "0", ope)
     return
 
 # delete : supprimer le dernier caractère
 def delete():
-    input_string = result.get()
+    input_string = display("get")
     input_list = list(input_string)
     char_to_del = len(input_list)-1
     input_list_2 = input_list.remove(char_to_del)
-    result.set(input_list_2)
+    display("set", input_list_2)
     return
 
 # car : carré du nombre
 def car():
-    nbr1 = result.get()
-    result.set(float(nbr1)**2)
+    nbrx[1] = display("get")
+    display("set", float(nbrx[1])**2)
     return
 
 # rc : racine carrée du nombre
 def rc():
-    nbr1 = result.get()
+    nbrx[1] = display("get")
     #On vérifie que le nombre peut être mis à la racine carré
-    if float(nbr1)<0.0:
+    if float(nbrx[1])<0.0:
         error_msg = ""
         error(error_msg)
     else:
-        result.set(sqrt(float(nbr1)))
+        display("set", sqrt(float(nbrx[1])))
     return
 
 # percentage : pourcentage du nombre 
 def percentage():
-    nbr1 = result.get()
-    result.set(float(nbr1)/100)
+    nbrx[1] = display("get")
+    display("set", float(nbrx[1])/100)
     return
 
 ##########################################################
@@ -253,7 +239,7 @@ window.withdraw()
 # Titre
 window.title("Calculatrice Équipe BKRS")
 # Couleur
-base_color = "#00ffc3"
+#base_color = "#00ffc3"
 # Clavier
 ## Cadre du résultat
 frame_result = Frame(window)
@@ -265,13 +251,13 @@ lbl_result = Label(frame_result, textvariable=result,font=("Courier", 20))
 result.set("0")
 lbl_result.grid(column = 0,row = 0,sticky=E)
 ## Cadre du signe
-frame_signe = Frame(window)
-frame_signe.grid(column = 0,row = 0,sticky=N)
+frame_sign = Frame(window)
+frame_sign.grid(column = 0,row = 0,sticky=W)
 ## Signe
-signe = StringVar()
-Label(frame_signe, textvariable=signe,font=("Courier", 20)).pack(side=LEFT, padx=10)
+sign = StringVar()
+Label(frame_sign, textvariable=sign,font=("Courier", 20)).pack(side=LEFT, padx=10)
 ## Set du signe à ' '
-signe.set("")
+sign.set("")
 ## Reste du clavier
 frame_padding = Frame(window,height=30)
 frame_padding.grid(column = 0,row = 2)
