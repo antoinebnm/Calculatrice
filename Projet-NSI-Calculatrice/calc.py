@@ -3,14 +3,14 @@ TK_SILENCE_DEPRECATION=1
 
 # Importation des librairies
 from tkinter import *
+import tkinter.messagebox as alert
 from math import *
 
 # Initialisation des variables
 numbers = list(range(10))
-mode = ""
-nbrx = ["", "", "", ""]
-i = 0
-debug = str(input("Debug mode (True or False) : "))
+debug = False
+nbrx = ["True", "0", "", ""]
+index = 2
 
 
 ##########################################################
@@ -22,7 +22,6 @@ debug = str(input("Debug mode (True or False) : "))
 # Affichage
 
 def display(mode, num="", ope=""):
-    print(mode)
     if mode == "get":
         nbrx[3] = result.get()
     elif mode == "set":
@@ -38,7 +37,8 @@ def docs():
 def help_keyboard():
     return
 
-def error(msg):
+def error(title, msg):
+    alert.showerror(title, msg)
     return
 
 # Boutons Clavier Calculatrice : __main__
@@ -58,6 +58,10 @@ def button_pressed(button):
     elif button == "+" or button == "-" or button == "x" or button == "÷":
         button_type = "basic-operation"
         operation(button)
+    # Test : bouton ±
+    elif button == "±":
+        button_type = "opposite"
+        pm(nbrx[0])
     # Test : bouton =
     elif button == "=":
         button_type = "calculate"
@@ -83,13 +87,14 @@ def button_pressed(button):
         button_type = "delete"
         delete()
     # Fin de la fontion
-    if debug=="True":print("Type of the button pressed : {}".format(button_type))
+    if debug == True: print("Type of the button pressed : {}".format(button_type))
     return
 
 
 # Touches Clavier d'ordi : __main__
 
 def key_pressed(key):
+    global debug
     key_type = "not defined"
     # Test : touche 'chiffre'
     for selector in numbers:
@@ -101,9 +106,18 @@ def key_pressed(key):
         clear()
     elif str(key.char) == "@":
         key_type = "dev key"
-        print(display("get"))
+        if debug == True:
+            debug = False
+            print("Debug : False")
+        else:
+            debug = True
+            print("Debug : True")
+    elif str(key.char) == "i":
+        key_type = "dev key"
+        if debug == True:
+            print(index)
     # Fin de la fonction
-    if debug=="True":print("Type of the key pressed : {}".format(key_type))
+    if debug == True: print("Type of the key pressed : {}".format(key_type))
     return
 
 
@@ -115,49 +129,58 @@ def key_pressed(key):
 
 # number : incrémentation de nombres sur l'écran
 def number(button):
+    ope = sign.get()
     char_limit = 8
     input_string = display("get")
+    print(ope)
     input_list = list(input_string)
     # point detection
     for selector in input_list:
         if str(selector) == ".":
-            if debug=="True":print("Point detected : chara limit = 9")
+            if debug == True: print("Point detected : chara limit = 9")
             char_limit = 9
     if input_string == "0":
-        display("set", button)
+        display("set", button, ope)
     elif int(len(input_list))>=int(char_limit):
-        if debug=="True":print("Limite de charactère atteinte")
-        pass
+        error("Erreur :", "Limite de charactère atteinte")
+        if debug == True: print("Limite de charactère atteinte")
     else:
-        display("set", str(input_string) + str(button))
+        display("set", str(input_string) + str(button), ope)
     input_string = display("get")
     input_list = list(input_string)
-    if debug=="True":print("input_string="+str(input_string),"\n","input_list="+str(input_list),"\n","len(input_list)="+str(len(input_list)))
+    if debug == True: print("input_string="+str(input_string),"\n","input_list="+str(input_list),"\n","len(input_list)="+str(len(input_list)))
     return
 
 # addpoint : ajout d'un point après le dernier chiffre
 def add_point():
+    ope = sign.get()
     point_placed = False
     input_string = display("get")
     input_list = list(input_string)
     # point detection
     for selector in input_list:
         if str(selector) == ".":
-            if debug=="True":print("Erreur : un point est déjà placé")
+            error("Erreur :", "Un point est déjà placé")
+            if debug == True: print("Erreur : un point est déjà placé")
             point_placed = True
     if point_placed != True:
-        display("set", str(input_string) + ".")
+        display("set", str(input_string) + ".", ope)
     return
 
 # operation : tri des opérations
 def operation(button):
-    nbrx[1] = display("get")
+    global index
+    if index == 1:
+        index = 2
+    else:
+        index = 1
+    nbrx[index] = display("get")
+    if debug == True: print(nbrx[index],"\n",nbrx[1],"\n",nbrx[2])
     if button == "=":
         ope = sign.get()
-        print(ope)
-        calculate(nbrx[1], ope)
+        calculate(ope)
         return
-    if button == "+":
+    elif button == "+":
         ope = "+"
     elif button == "-":
         ope = "-"
@@ -168,17 +191,28 @@ def operation(button):
     display("set", "0", ope)
     return
 
+# pm(arg) : fonction plus ou moins
+def pm(op):
+    if op == True:
+        op = False
+        display("set", display("get"))
+    elif op == False:
+        op = True
+    return
+
 # calculate : calculer
-def calculate(nbr, ope):
+def calculate(ope):
+    global index
     nbrx[2] = display("get")
     if ope != "":
-        resultat = eval(str(nbr) + str(nbrx[0]) + str(nbrx[2]))
+        resultat = eval(str(nbrx[1]) + str(ope) + str(nbrx[2]))
     else:
         resultat = nbrx[2]
         #error_msg = "Nombre ou sign opératoire manquant."
         #error(error_msg)
     ope = ""
-    display("set", resultat, ope)
+    index = 2
+    display("set", resultat)
     return
 
 # clear : effacer l'écran
@@ -191,15 +225,13 @@ def clear():
 def delete():
     input_string = display("get")
     input_list = list(input_string)
-    char_to_del = len(input_list)-1
-    input_list_2 = input_list.remove(char_to_del)
-    display("set", input_list_2)
+    display("set", list(input_list.pop(-1)))
     return
 
 # car : carré du nombre
 def car():
     nbrx[1] = display("get")
-    display("set", float(nbrx[1])**2)
+    display("set", eval(nbrx[1] + "** 2"))
     return
 
 # rc : racine carrée du nombre
