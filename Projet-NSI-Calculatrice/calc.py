@@ -9,8 +9,9 @@ from math import *
 # Initialisation des variables
 numbers = list(range(10))
 debug = False
-nbrx = ["True", "0", "", ""]
+nbrx = ["", "0", "", ""]
 index = 2
+char_limit = 8
 
 
 ##########################################################
@@ -37,8 +38,8 @@ def docs():
 def help_keyboard():
     return
 
-def error(title, msg):
-    alert.showerror(title, msg)
+def error(msg):
+    alert.showerror("Erreur :", msg)
     return
 
 # Boutons Clavier Calculatrice : __main__
@@ -60,8 +61,9 @@ def button_pressed(button):
         operation(button)
     # Test : bouton ±
     elif button == "±":
+        print(button)
         button_type = "opposite"
-        pm(nbrx[0])
+        pm()
     # Test : bouton =
     elif button == "=":
         button_type = "calculate"
@@ -95,6 +97,7 @@ def button_pressed(button):
 
 def key_pressed(key):
     global debug
+    global char_limit
     key_type = "not defined"
     # Test : touche 'chiffre'
     for selector in numbers:
@@ -116,6 +119,9 @@ def key_pressed(key):
         key_type = "dev key"
         if debug == True:
             print(index)
+    elif str(key.char) == "l":
+        key_type = "dev key"
+        print(char_limit)
     # Fin de la fonction
     if debug == True: print("Type of the key pressed : {}".format(key_type))
     return
@@ -129,20 +135,24 @@ def key_pressed(key):
 
 # number : incrémentation de nombres sur l'écran
 def number(button):
+    global char_limit
     ope = sign.get()
-    char_limit = 8
     input_string = display("get")
-    print(ope)
     input_list = list(input_string)
     # point detection
+    if input_list[0] == "-":
+        char_limit = 9
     for selector in input_list:
         if str(selector) == ".":
             if debug == True: print("Point detected : chara limit = 9")
-            char_limit = 9
+            if input_list[0] == "-":
+                char_limit = 10
+            else:
+                char_limit = 9
     if input_string == "0":
         display("set", button, ope)
     elif int(len(input_list))>=int(char_limit):
-        error("Erreur :", "Limite de charactère atteinte")
+        error("Limite de charactère atteinte")
         if debug == True: print("Limite de charactère atteinte")
     else:
         display("set", str(input_string) + str(button), ope)
@@ -153,6 +163,7 @@ def number(button):
 
 # addpoint : ajout d'un point après le dernier chiffre
 def add_point():
+    global char_limit
     ope = sign.get()
     point_placed = False
     input_string = display("get")
@@ -160,11 +171,14 @@ def add_point():
     # point detection
     for selector in input_list:
         if str(selector) == ".":
-            error("Erreur :", "Un point est déjà placé")
+            error("Un point est déjà placé")
             if debug == True: print("Erreur : un point est déjà placé")
             point_placed = True
     if point_placed != True:
-        display("set", str(input_string) + ".", ope)
+        if len(input_list) == char_limit:
+            return
+        else:
+            display("set", str(input_string) + ".", ope)
     return
 
 # operation : tri des opérations
@@ -192,18 +206,13 @@ def operation(button):
     return
 
 # pm(arg) : fonction plus ou moins
-def pm(op):
-    if op == True:
-        op = False
-        display("set", display("get"))
-    elif op == False:
-        op = True
+def pm():
+    display("set", eval(str(display("get")) + "*-1"))
     return
 
 # calculate : calculer
 def calculate(ope):
     global index
-    nbrx[2] = display("get")
     if ope != "":
         resultat = eval(str(nbrx[1]) + str(ope) + str(nbrx[2]))
     else:
@@ -225,7 +234,7 @@ def clear():
 def delete():
     input_string = display("get")
     input_list = list(input_string)
-    display("set", list(input_list.pop(-1)))
+    display("set", str(list(input_list.pop(-1))))
     return
 
 # car : carré du nombre
@@ -239,16 +248,15 @@ def rc():
     nbrx[1] = display("get")
     #On vérifie que le nombre peut être mis à la racine carré
     if float(nbrx[1])<0.0:
-        error_msg = ""
-        error(error_msg)
+        error("Racine carré d'un nombre négatif impossible !")
     else:
-        display("set", sqrt(float(nbrx[1])))
+        display("set", sqrt(nbrx[1]))
     return
 
 # percentage : pourcentage du nombre 
 def percentage():
     nbrx[1] = display("get")
-    display("set", float(nbrx[1])/100)
+    display("set", str(nbrx[1])/100)
     return
 
 ##########################################################
